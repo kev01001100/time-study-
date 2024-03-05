@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Time Study Tool</title>
+    <style>
+        table, th, td {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <button id="startBtn">Start</button>
+    <button id="stopBtn">Stop</button>
+    <button id="exportBtn">Export to Excel</button>
+
+    <div>
+        <input type="text" id="elementInput" placeholder="Enter Element" />
+        <button id="addElementBtn">Add to Table</button>
+        <button id="lockAllBtn">Lock All</button>
+
+        <textarea id="elementListInput"></textarea>
+        <button id="importElementsBtn">Import Elements</button>
+
+    </div>
+
+    <div>
+        <div id="stopwatchDisplay">Elapsed Time: 00:00:00</div>
+    </div>
+
+    <div>
+        <table id="leftTable">
+            <tr>
+                <th>Element Table</th>
+                <th>Add</th>
+            </tr>
+        </table>
+        <table id="rightTable">
+            <tr>
+                <th>Your Elements</th>
+                <th>Time (Mins)</th>
+            </tr>
+        </table>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
