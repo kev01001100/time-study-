@@ -1,3 +1,8 @@
+//=========================================================
+// - Start button for the stopwatch
+// Functionality: calculates elapsed time (mm:ss:SS)
+//                calculates time in industrial format (IM)
+//=========================================================
 let timer = null;
 let startTime = 0;
 
@@ -5,37 +10,44 @@ document.getElementById('startBtn').onclick = function() {
     if (timer === null) {
         startTime = Date.now();
 
-        // Function to update stopwatch with high precision
+        // update stopwatch 
         function updateStopwatch() {
-            const elapsedTime = Date.now() - startTime;
+            const elapsedTime = Date.now() - startTime; 
+            
+            // elapsed time format
             const totalSeconds = elapsedTime / 1000;
             const minutes = Math.floor(totalSeconds / 60);
             const seconds = Math.floor(totalSeconds % 60);
-            const milliseconds = elapsedTime % 1000; // Get milliseconds
+            const milliseconds = elapsedTime % 1000;
         
+            // elapsed time decimal format
             const minutesFormatted = minutes.toString().padStart(2, '0');
             const secondsFormatted = seconds.toString().padStart(2, '0');
             const millisecondsFormatted = milliseconds.toString().padStart(3, '0');
             
-            // Calculate industrial time (minutes as a decimal fraction of an hour)
+            // calculate industrial time (minutes as a decimal fraction of an hour)
             const industrialMinutes = (elapsedTime / 60000).toFixed(2);
-            // Two decimal places for precision
         
-            // Update the display to show both mm:ss.SSS format and IM
+            // display mm:ss.SSS and IM
             document.getElementById('stopwatchDisplay').textContent = 
                 `Elapsed Time: ${minutesFormatted}:${secondsFormatted}.${millisecondsFormatted} / ${industrialMinutes} IM`;
         }
         
-        // Immediately update the stopwatch to show 00:00:00 at the start
+        // update stopwatch to show 00:00:00 at the start
         updateStopwatch();
 
-        // Update the stopwatch every 10 milliseconds for high precision
+        // update the stopwatch every 10 millisec
         timer = setInterval(updateStopwatch, 10);
-
+        // disable the start btn when started the stopwatch
         document.getElementById('startBtn').disabled = true;
     }
 };
 
+
+//=========================================================
+// - Stop button for the stopwatch
+// Functionality: stop the elapsed time (mm:ss:SS)
+//=========================================================
 document.getElementById('stopBtn').onclick = function() {
     if (timer !== null) {
         clearInterval(timer);
@@ -45,31 +57,36 @@ document.getElementById('stopBtn').onclick = function() {
 };
 
 
-document.getElementById('stopBtn').onclick = function() {
-    if (timer !== null) {
-        clearInterval(timer);
-        timer = null;
-        document.getElementById('startBtn').disabled = false;
-    }
-};
-
-
-let isLocked = false; // Global lock state
+//=========================================================
+// - Lock button
+// Functionality: disable the delete button to prevent 
+//                accidental deletion of an element when 
+//                the stop watch started
+//=========================================================
+let isLocked = false; 
 
 document.getElementById('lockAllBtn').addEventListener('click', function() {
-    isLocked = !isLocked; // Toggle lock state
-    updateDeleteButtons(); // Update the state of delete buttons
-    this.textContent = isLocked ? 'Unlock All' : 'Lock All'; // Update button text
+    isLocked = !isLocked; 
+    updateDeleteButtons();
+    this.textContent = isLocked ? 'Unlock All' : 'Lock All'; 
 });
 
 function updateDeleteButtons() {
-    // Get all delete buttons
+    // get all delete buttons
     const deleteButtons = document.querySelectorAll('#leftTable button.deleteBtn');
     deleteButtons.forEach(button => {
-        button.disabled = isLocked; // Disable or enable based on isLocked
+        button.disabled = isLocked; 
     });
 }
 
+//=========================================================
+// - Add Elements Button and Input Field 
+// Functionality: retrieve the value from elementInput and 
+//                create a new row into the element Library 
+//                table.
+// Add button: add the element from library to yourList.
+// Delete button: remove the element added to the library table
+//=========================================================
 document.getElementById('addElementBtn').addEventListener('click', function() {
     const input = document.getElementById('elementInput');
     const value = input.value.trim();
@@ -89,8 +106,8 @@ document.getElementById('addElementBtn').addEventListener('click', function() {
         const cell3 = document.createElement('td');
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Delete';
-        deleteButton.classList.add('deleteBtn'); // Add class for selection
-        deleteButton.disabled = isLocked; // Initialize based on isLocked
+        deleteButton.classList.add('deleteBtn');  
+        deleteButton.disabled = isLocked; 
         deleteButton.onclick = function() {
             row.parentNode.removeChild(row);
         };
@@ -101,43 +118,40 @@ document.getElementById('addElementBtn').addEventListener('click', function() {
         row.appendChild(cell3);
         document.getElementById('leftTable').appendChild(row);
 
-        input.value = ''; // Clear input field
+        input.value = ''; // clear input field after submitted a value
     }
 });
 
-let lastLapTime = 0; // Initialize the last lap time
+let lastLapTime = 0; 
 
 function addToRightTable(value) {
-    if (timer !== null) { // Only add if timer is running
+    if (timer !== null) { 
         const now = Date.now();
         const elapsedSinceStart = now - startTime;
         const lapTime = now - (lastLapTime || startTime);
-        lastLapTime = now; // Update lastLapTime for the next lap
+        lastLapTime = now; 
 
-        // Calculate industrial time (minutes as a decimal fraction of an hour)
-        const lapMinutes = lapTime / 60000; // Lap time in minutes
-        const industrialLapMinutes = lapMinutes.toFixed(2); // Two decimal places for precision
+        // calculate industrial time
+        const lapMinutes = lapTime / 60000; 
+        const industrialLapMinutes = lapMinutes.toFixed(2); 
 
-        // Update the content of the second cell with the Industrial Time (IM)
+        // update with industrial time
         const cell2 = document.createElement('td');
         cell2.textContent = `${industrialLapMinutes} IM`;
 
-        // Create a new row
+        // create a new row
         const row = document.createElement('tr');
         const cell1 = document.createElement('td');
         cell1.textContent = value;
         
-        // Append cells to the row
+        // append cells to the row
         row.appendChild(cell1);
         row.appendChild(cell2);
 
-        // Append the row to the right table
+        // append the rows to yourList
         document.getElementById('rightTable').appendChild(row);
     }
 }
-
-
-
 
 
 document.getElementById('exportBtn').addEventListener('click', exportToExcel);
@@ -145,10 +159,9 @@ document.getElementById('exportBtn').addEventListener('click', exportToExcel);
 function exportToExcel() {
     let csvContent = "data:text/csv;charset=utf-8,Element,Time (Mins)\n";
 
-    // Select rows from the right table, skipping the header row
     document.querySelectorAll("#rightTable tr").forEach((row, index) => {
-        if (index === 0) return; // Skip header
-        const cells = row.querySelectorAll("td");
+        if (index === 0) return; // skip header
+        const cells = row.querySelectorAll("td"); // row
         const rowData = [cells[0].innerText, cells[1].innerText.replace('Lap: ', '').replace(' min', '')].join(",");
         csvContent += rowData + "\n";
     });
@@ -157,34 +170,35 @@ function exportToExcel() {
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
     link.setAttribute("download", "time_study_data.csv");
-    document.body.appendChild(link); // Required for Firefox
+    document.body.appendChild(link); 
     link.click();
     document.body.removeChild(link);
 }
 
 document.getElementById('importElementsBtn').addEventListener('click', function() {
     const input = document.getElementById('elementListInput');
-    const elements = input.value.trim().split('\n'); // Split input by line breaks
+    const elements = input.value.trim().split('\n'); 
 
     elements.forEach(element => {
-        const value = element.trim(); // Remove leading and trailing whitespace
+        const value = element.trim(); 
         if (value) {
-            createInitialRowForElement(value); // Add each element to the left table
+            createInitialRowForElement(value); // add each element to the elem Lib
         }
     });
 
-    input.value = ''; // Clear input field after importing
+    input.value = ''; // clear input field after importing
 });
 
-// Update the createInitialRowForElement function to correctly append rows to the tbody
 function createInitialRowForElement(elementName) {
     const tableBody = document.getElementById('leftTable').querySelector('tbody');
     const elementRow = document.createElement('tr');
     
+    // element name
     const cell = document.createElement('td');
     cell.textContent = elementName;
     elementRow.appendChild(cell);
 
+    // add btn
     const addButtonCell = document.createElement('td');
     const addButton = document.createElement('button');
     addButton.textContent = 'Add';
@@ -194,5 +208,27 @@ function createInitialRowForElement(elementName) {
     addButtonCell.appendChild(addButton);
     elementRow.appendChild(addButtonCell);
 
+     // delete btn
+     const deleteButtonCell = document.createElement('td');
+     const deleteButton = document.createElement('button');
+     deleteButton.textContent = 'Delete';
+     deleteButton.classList.add('deleteBtn');  
+     deleteButton.disabled = isLocked;  
+     deleteButton.onclick = function() {
+         elementRow.remove();  
+     };
+     deleteButtonCell.appendChild(deleteButton);
+     elementRow.appendChild(deleteButtonCell);
+
     tableBody.appendChild(elementRow);
+}
+
+function deleteElement(elementName) {
+    const rows = document.querySelectorAll('#leftTable tbody tr');
+    rows.forEach(row => {
+        const cellValue = row.cells[0].textContent; 
+        if (cellValue === elementName) {
+            row.parentNode.removeChild(row);  
+        }
+    });
 }
