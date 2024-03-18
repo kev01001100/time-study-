@@ -10,39 +10,51 @@
         th, td {
             padding: 5px;
         }
+        #leftTable, #rightTable {
+        display: inline-block;
+        vertical-align: top; 
+        margin: 0 auto; 
+        }
+        .container {
+            text-align: center;
+        }
     </style>
 </head>
 <body>
-    <button id="startBtn">Start</button>
-    <button id="stopBtn">Stop</button>
-    <button id="exportBtn">Export to Excel</button>
+    <div class="container">
+        <button id="startBtn">Start</button>
+        <button id="stopBtn">Stop</button>
+        <button id="exportBtn">Export to Excel</button>
 
-    <div>
-        <input type="text" id="elementInput" placeholder="Enter An Element" />
-        <button id="addElementBtn">Add to Table</button>
-        <button id="lockAllBtn">Lock All</button>
+        <div>
+            <input type="text" id="elementInput" placeholder="Enter An Element" />
+            <button id="addElementBtn">Add to Table</button>
+            <button id="lockAllBtn">Lock All</button>
 
-        <textarea id="elementListInput" placeholder="Paste your list of elements here"></textarea>
-        <button id="importElementsBtn">Import Elements</button>
-    </div>
+            <textarea id="elementListInput" placeholder="Paste your list of elements here"></textarea>
+            <button id="importElementsBtn">Import Elements</button>
+        </div>
 
-    <div>
-        <div id="stopwatchDisplay">Elapsed Time: 00:00:00</div>
-    </div>
+        <div>
+            <div id="stopwatchDisplay">Elapsed Time: 00:00:00</div>
+        </div>
 
-    <div>
-        <table id="leftTable">
-            <tr>
-                <th>Element Table</th>
-                <th>Add</th>
-            </tr>
-        </table>
-        <table id="rightTable">
-            <tr>
-                <th>Your Elements</th>
-                <th>Time (Mins)</th>
-            </tr>
-        </table>
+        <div class="TableContainer">
+            <table id="leftTable">
+                <tr>
+                    <th>Element Table</th>
+                    <th>Add</th>
+                    <th>Delete</th>
+                </tr>
+            </table>
+           
+            <table id="rightTable">
+                <tr>
+                    <th>Your Elements</th>
+                    <th>Time (Mins)</th>
+                </tr>
+            </table>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>
