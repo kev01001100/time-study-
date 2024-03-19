@@ -137,7 +137,7 @@ function addToRightTable(value) {
 
         // update with industrial time
         const cell2 = document.createElement('td');
-        cell2.textContent = `${industrialLapMinutes} IM`;
+        cell2.textContent = `${industrialLapMinutes}`;
 
         // create a new row
         const row = document.createElement('tr');
