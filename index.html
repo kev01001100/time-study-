@@ -2,44 +2,25 @@
 <html>
 <head>
     <title>Time Study Tool</title>
-    <style>
-        table, th, td {
-            border: 1px solid black;
-            border-collapse: collapse;
-        }
-        th, td {
-            padding: 5px;
-        }
-        #leftTable, #rightTable {
-        display: inline-block;
-        vertical-align: top; 
-        margin: 0 auto; 
-        }
-        .container {
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <button id="startBtn">Start</button>
-        <button id="stopBtn">Stop</button>
-        <button id="exportBtn">Export to Excel</button>
-
+        <div class="section-header">Stopwatch Controls</div>
+        <button id="startBtn" class="btn">Start</button>
+        <button id="stopBtn" class="btn">Stop</button>
+        <button id="lockAllBtn" class="btn">Lock All</button>
+        <button id="exportBtn" class="btn">Export to Excel</button>
         <div>
-            <input type="text" id="elementInput" placeholder="Enter An Element" />
-            <button id="addElementBtn">Add to Table</button>
-            <button id="lockAllBtn">Lock All</button>
-
+            <input type="text" id="elementInput" class="input" placeholder="Enter an element" />
+            <button id="addElementBtn" class="btn">Add to Table</button>
             <textarea id="elementListInput" placeholder="Paste your list of elements here"></textarea>
-            <button id="importElementsBtn">Import Elements</button>
+            <button id="importElementsBtn" class="btn">Import Elements</button>
         </div>
-
         <div>
-            <div id="stopwatchDisplay">Elapsed Time: 00:00:00</div>
+            <div id="stopwatchDisplay" style="margin-top: 40px;">Elapsed Time: 00:00:00</div>
         </div>
-
-        <div class="TableContainer">
+        <div class="table-container">
             <table id="leftTable">
                 <tr>
                     <th>Element Table</th>
@@ -47,15 +28,16 @@
                     <th>Delete</th>
                 </tr>
             </table>
-           
             <table id="rightTable">
                 <tr>
                     <th>Your Elements</th>
                     <th>Time (Mins)</th>
+                    <th>Delete</th>
                 </tr>
             </table>
         </div>
     </div>
     <script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.16.9/xlsx.full.min.js"></script>
 </body>
 </html>

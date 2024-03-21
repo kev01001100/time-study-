@@ -72,12 +72,17 @@ document.getElementById('lockAllBtn').addEventListener('click', function() {
 });
 
 function updateDeleteButtons() {
-    // get all delete buttons
     const deleteButtons = document.querySelectorAll('#leftTable button.deleteBtn');
     deleteButtons.forEach(button => {
-        button.disabled = isLocked; 
+        button.disabled = isLocked;
+        if (isLocked) {
+            button.classList.add('disabled'); // disabled class when locked
+        } else {
+            button.classList.remove('disabled'); // remove disabled class when unlocked
+        }
     });
 }
+
 
 //=========================================================
 // - Add Elements Button and Input Field 
@@ -98,6 +103,7 @@ document.getElementById('addElementBtn').addEventListener('click', function() {
         const cell2 = document.createElement('td');
         const addButton = document.createElement('button');
         addButton.textContent = 'Add';
+        addButton.className = 'btn'; // .btn styling
         addButton.onclick = function() {
             addToRightTable(value);
         };
@@ -106,8 +112,8 @@ document.getElementById('addElementBtn').addEventListener('click', function() {
         const cell3 = document.createElement('td');
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Delete';
-        deleteButton.classList.add('deleteBtn');  
-        deleteButton.disabled = isLocked; 
+        deleteButton.className = 'btn deleteBtn'; // btn styling 
+        deleteButton.disabled = isLocked; // isLocked disabled state
         deleteButton.onclick = function() {
             row.parentNode.removeChild(row);
         };
@@ -118,7 +124,7 @@ document.getElementById('addElementBtn').addEventListener('click', function() {
         row.appendChild(cell3);
         document.getElementById('leftTable').appendChild(row);
 
-        input.value = ''; // clear input field after submitted a value
+        input.value = ''; // clear the input field after the value has been submitted
     }
 });
 
@@ -127,7 +133,6 @@ let lastLapTime = 0;
 function addToRightTable(value) {
     if (timer !== null) { 
         const now = Date.now();
-        const elapsedSinceStart = now - startTime;
         const lapTime = now - (lastLapTime || startTime);
         lastLapTime = now; 
 
@@ -135,46 +140,74 @@ function addToRightTable(value) {
         const lapMinutes = lapTime / 60000; 
         const industrialLapMinutes = lapMinutes.toFixed(2); 
 
-        // update with industrial time
-        const cell2 = document.createElement('td');
-        cell2.textContent = `${industrialLapMinutes}`;
-
         // create a new row
         const row = document.createElement('tr');
         const cell1 = document.createElement('td');
         cell1.textContent = value;
+
+        // create and append industrial time cell
+        const cell2 = document.createElement('td');
+        cell2.textContent = `${industrialLapMinutes}`;
         
+        // create and append delete button cell specifically for the right table
+        const cell3 = document.createElement('td');
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Delete';
+        deleteButton.className = 'btn deleteBtnRight'; 
+
+        deleteButton.onclick = function() {
+            row.remove(); // remove the row from the table
+        };
+
+        cell3.appendChild(deleteButton);
+
         // append cells to the row
         row.appendChild(cell1);
         row.appendChild(cell2);
+        row.appendChild(cell3);
 
-        // append the rows to yourList
+        // append the row to the right table
         document.getElementById('rightTable').appendChild(row);
     }
 }
 
-
 document.getElementById('exportBtn').addEventListener('click', exportToExcel);
 
 function exportToExcel() {
-    let csvContent = "data:text/csv;charset=utf-8,Element,Time (Mins)\n";
+    // csv content w/ UTF-8 BOM for special character 
+    let csvContent = "\uFEFF";
 
+    // add headers
+    csvContent += "Element,Time (Mins)\n";
+
+    // iterate over each row in the right table, skipping the header
     document.querySelectorAll("#rightTable tr").forEach((row, index) => {
-        if (index === 0) return; // skip header
-        const cells = row.querySelectorAll("td"); // row
-        const rowData = [cells[0].innerText, cells[1].innerText.replace('Lap: ', '').replace(' min', '')].join(",");
+        if (index === 0) return; // Skip header
+
+        // extract text from each cell in the row
+        const cells = row.querySelectorAll("td:not(:last-child)");
+        // extract textContent from each cell
+        // wrap each value in quotes (special characters interpreted correctly)
+        const rowData = [...cells].map(cell => `"${cell.innerText}"`).join(",");
+
+        // add the row data to the CSV content
         csvContent += rowData + "\n";
     });
 
-    const encodedUri = encodeURI(csvContent);
+    // encode the csv content
+    const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
+
+    // trigger the download
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
     link.setAttribute("download", "time_study_data.csv");
+
+    // append the link to the body, click it, and then remove it
     document.body.appendChild(link); 
     link.click();
     document.body.removeChild(link);
 }
-
+ 
 document.getElementById('importElementsBtn').addEventListener('click', function() {
     const input = document.getElementById('elementListInput');
     const elements = input.value.trim().split('\n'); 
@@ -189,36 +222,38 @@ document.getElementById('importElementsBtn').addEventListener('click', function(
     input.value = ''; // clear input field after importing
 });
 
+// create initial row for element in the left table
 function createInitialRowForElement(elementName) {
     const tableBody = document.getElementById('leftTable').querySelector('tbody');
     const elementRow = document.createElement('tr');
     
-    // element name
+    // element name cell
     const cell = document.createElement('td');
     cell.textContent = elementName;
     elementRow.appendChild(cell);
 
-    // add btn
+    // add button cell
     const addButtonCell = document.createElement('td');
     const addButton = document.createElement('button');
     addButton.textContent = 'Add';
+    addButton.className = 'btn';
     addButton.onclick = function() {
         addToRightTable(elementName);
     };
     addButtonCell.appendChild(addButton);
     elementRow.appendChild(addButtonCell);
 
-     // delete btn
-     const deleteButtonCell = document.createElement('td');
-     const deleteButton = document.createElement('button');
-     deleteButton.textContent = 'Delete';
-     deleteButton.classList.add('deleteBtn');  
-     deleteButton.disabled = isLocked;  
-     deleteButton.onclick = function() {
-         elementRow.remove();  
-     };
-     deleteButtonCell.appendChild(deleteButton);
-     elementRow.appendChild(deleteButtonCell);
+    // delete button cell
+    const deleteButtonCell = document.createElement('td');
+    const deleteButton = document.createElement('button');
+    deleteButton.textContent = 'Delete';
+    deleteButton.className = 'btn deleteBtn';
+    deleteButton.disabled = isLocked;
+    deleteButton.onclick = function() {
+        elementRow.remove();
+    };
+    deleteButtonCell.appendChild(deleteButton);
+    elementRow.appendChild(deleteButtonCell);
 
     tableBody.appendChild(elementRow);
 }
@@ -231,4 +266,4 @@ function deleteElement(elementName) {
             row.parentNode.removeChild(row);  
         }
     });
-}
+} 
