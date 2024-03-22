@@ -267,3 +267,17 @@ function deleteElement(elementName) {
         }
     });
 } 
+
+//=========================================================
+// - Popup Note 
+// Functionality: reminder how to import elements properly
+//=========================================================
+// close the popup note
+function closePopup() {
+    document.getElementById('popupNote').style.display = 'none';
+}
+
+// show popup note when page loads
+window.onload = function() {
+    document.getElementById('popupNote').style.display = 'flex';
+}
