@@ -273,9 +273,9 @@ function deleteElement(elementName) {
 } 
 
 document.getElementById('elementListInput').addEventListener('keydown', function(event) {
-    // check if Enter key is pressed without Shift key
+    // Check if Enter key is pressed without Shift key
     if (event.key === 'Enter' && !event.shiftKey) {
-        event.preventDefault(); // prevent default action (new line or form submit)
+        event.preventDefault(); // Prevent default action (new line or form submit)
         
         const input = this; // 'this' refers to the textarea element
         const elements = input.value.trim().split('\n'); 
@@ -283,7 +283,7 @@ document.getElementById('elementListInput').addEventListener('keydown', function
         elements.forEach(element => {
             const value = element.trim(); 
             if (value) {
-                createInitialRowForElement(value); // add each element to the element library
+                createInitialRowForElement(value); // Add each element to the element library
             }
         });
 

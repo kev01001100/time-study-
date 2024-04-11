@@ -105,15 +105,6 @@ textarea {
     margin-bottom: 20px; 
 }
 
-
-/* lastest added background*/
-.latest-added {
-    background-color: #8587fe;  
-    color: white; 
-}
-
-
-/* light mode */
 .container {
     max-width: 800px;
     margin: 40px auto; 
@@ -213,6 +204,13 @@ textarea {
     margin-bottom: 20px; 
 }
 
+
+/* lastest added background*/
+.latest-added {
+    background-color: #8587fe;  
+    color: white; 
+}
+/* Light theme */
 .light-theme {
     background-color: #f0f0f0;
     color: #333;
@@ -236,10 +234,10 @@ textarea {
 }
 
 .theme-toggle {
-    font-size: 16px;  
-    background-color: transparent;  
+    font-size: 16px; 
+    background-color: transparent; 
     color: #ffffff; 
-    border: none;  
+    border: none; 
     border-radius: 50%;  
     width: 25px;  
     height: 25px;  
@@ -247,7 +245,7 @@ textarea {
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    transition: transform 0.2s; 
+    transition: transform 0.2s;  
 }
 
 .theme-toggle:hover, .theme-toggle:focus {
@@ -256,7 +254,7 @@ textarea {
 }
 
 .light-theme .theme-toggle {
-    color: #2C2F33; 
+    color: #2C2F33;
 }
 
 .light-theme .theme-toggle:hover, .light-theme .theme-toggle:focus {
