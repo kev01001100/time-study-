@@ -83,7 +83,6 @@ function updateDeleteButtons() {
     });
 }
 
-
 //=========================================================
 // - Add Elements Button and Input Field 
 // Functionality: retrieve the value from elementInput and 
@@ -92,41 +91,41 @@ function updateDeleteButtons() {
 // Add button: add the element from library to yourList.
 // Delete button: remove the element added to the library table
 //=========================================================
-document.getElementById('addElementBtn').addEventListener('click', function() {
-    const input = document.getElementById('elementInput');
-    const value = input.value.trim();
-    if (value) {
-        const row = document.createElement('tr');
-        const cell1 = document.createElement('td');
-        cell1.textContent = value;
+// document.getElementById('addElementBtn').addEventListener('click', function() {
+//     const input = document.getElementById('elementInput');
+//     const value = input.value.trim();
+//     if (value) {
+//         const row = document.createElement('tr');
+//         const cell1 = document.createElement('td');
+//         cell1.textContent = value;
 
-        const cell2 = document.createElement('td');
-        const addButton = document.createElement('button');
-        addButton.textContent = 'Add';
-        addButton.className = 'btn'; // .btn styling
-        addButton.onclick = function() {
-            addToRightTable(value);
-        };
-        cell2.appendChild(addButton);
+//         const cell2 = document.createElement('td');
+//         const addButton = document.createElement('button');
+//         addButton.textContent = 'Add';
+//         addButton.className = 'btn'; // .btn styling
+//         addButton.onclick = function() {
+//             addToRightTable(value);
+//         };
+//         cell2.appendChild(addButton);
 
-        const cell3 = document.createElement('td');
-        const deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Delete';
-        deleteButton.className = 'btn deleteBtn'; // btn styling 
-        deleteButton.disabled = isLocked; // isLocked disabled state
-        deleteButton.onclick = function() {
-            row.parentNode.removeChild(row);
-        };
-        cell3.appendChild(deleteButton);
+//         const cell3 = document.createElement('td');
+//         const deleteButton = document.createElement('button');
+//         deleteButton.textContent = 'Delete';
+//         deleteButton.className = 'btn deleteBtn'; // btn styling 
+//         deleteButton.disabled = isLocked; // isLocked disabled state
+//         deleteButton.onclick = function() {
+//             row.parentNode.removeChild(row);
+//         };
+//         cell3.appendChild(deleteButton);
 
-        row.appendChild(cell1);
-        row.appendChild(cell2);
-        row.appendChild(cell3);
-        document.getElementById('leftTable').appendChild(row);
+//         row.appendChild(cell1);
+//         row.appendChild(cell2);
+//         row.appendChild(cell3);
+//         document.getElementById('leftTable').appendChild(row);
 
-        input.value = ''; // clear the input field after the value has been submitted
-    }
-});
+//         input.value = ''; // clear the input field after the value has been submitted
+//     }
+// });
 
 let lastLapTime = 0; 
 
@@ -168,45 +167,50 @@ function addToRightTable(value) {
 
         // append the row to the right table
         document.getElementById('rightTable').appendChild(row);
+
+        // Highlighting Mechanism
+        // Remove highlighting from previously added rows
+        document.querySelectorAll('#rightTable .latest-added').forEach(row => {
+            row.classList.remove('latest-added');
+        });
+
+        // Highlight the newly added row
+        row.classList.add('latest-added'); 
+        scrollToBottomOfRightTable();
+        adjustRightTableHeight();
     }
 }
 
 document.getElementById('exportBtn').addEventListener('click', exportToExcel);
-
+document.getElementById('exportBtn').addEventListener('click', exportToExcel);
 function exportToExcel() {
-    // csv content w/ UTF-8 BOM for special character 
-    let csvContent = "\uFEFF";
+    let csvContent = "\uFEFF"; // UTF-8 BOM for special character support
+    csvContent += "Element,Time (Mins)\n"; // Add headers
 
-    // add headers
-    csvContent += "Element,Time (Mins)\n";
-
-    // iterate over each row in the right table, skipping the header
     document.querySelectorAll("#rightTable tr").forEach((row, index) => {
-        if (index === 0) return; // Skip header
+        if (index === 0) return; // Skip header row
 
-        // extract text from each cell in the row
-        const cells = row.querySelectorAll("td:not(:last-child)");
-        // extract textContent from each cell
-        // wrap each value in quotes (special characters interpreted correctly)
-        const rowData = [...cells].map(cell => `"${cell.innerText}"`).join(",");
+        const cells = row.querySelectorAll("td");
+        // Skip the last cell (delete button) by using slice to select all cells except the last
+        const rowData = Array.from(cells).slice(0, -1) // Exclude the delete button column
+            .map(cell => `"${cell.innerText.replace(/"/g, '""')}"`).join(",");
 
-        // add the row data to the CSV content
         csvContent += rowData + "\n";
     });
 
-    // encode the csv content
-    const encodedUri = encodeURI("data:text/csv;charset=utf-8," + csvContent);
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
 
-    // trigger the download
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
+    link.setAttribute("href", url);
     link.setAttribute("download", "time_study_data.csv");
-
-    // append the link to the body, click it, and then remove it
-    document.body.appendChild(link); 
+    document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+
+    URL.revokeObjectURL(url);
 }
+
  
 document.getElementById('importElementsBtn').addEventListener('click', function() {
     const input = document.getElementById('elementListInput');
@@ -268,16 +272,37 @@ function deleteElement(elementName) {
     });
 } 
 
-//=========================================================
-// - Popup Note 
-// Functionality: reminder how to import elements properly
-//=========================================================
-// close the popup note
-function closePopup() {
-    document.getElementById('popupNote').style.display = 'none';
-}
+document.getElementById('elementListInput').addEventListener('keydown', function(event) {
+    // check if Enter key is pressed without Shift key
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault(); // prevent default action (new line or form submit)
+        
+        const input = this; // 'this' refers to the textarea element
+        const elements = input.value.trim().split('\n'); 
 
-// show popup note when page loads
-window.onload = function() {
-    document.getElementById('popupNote').style.display = 'flex';
-}
+        elements.forEach(element => {
+            const value = element.trim(); 
+            if (value) {
+                createInitialRowForElement(value); // add each element to the element library
+            }
+        });
+
+        input.value = ''; // clear input field after importing
+    }
+});
+
+
+document.addEventListener('keydown', function(event) {
+    if (event.target.tagName !== 'INPUT' && event.target.tagName !== 'TEXTAREA') {
+        if (document.activeElement !== document.getElementById('elementListInput')) {
+            document.getElementById('elementListInput').focus();
+        }
+    }
+});
+
+
+//theme
+document.getElementById('themeToggleBtn').addEventListener('click', function() {
+    document.body.classList.toggle('light-theme'); // Toggle the theme
+});
+

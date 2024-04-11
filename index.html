@@ -6,52 +6,18 @@
 </head>
 <body>
     <div class="container">
-        <div id="popupNote" class="popup-note">
-            <div class="popup-content">
-                <span class="close-btn" onclick="closePopup()">&times;</span>
-                <h2>How to import elements properly?</h2>
-                <div class="format-reminder-container">
-                    <table class="leftTable">
-                        <tr>
-                            <th>Element Description</th>
-                        </tr>
-                        <tr>
-                            <td>A</td>
-                        </tr>
-                        <tr>
-                            <td>B</td>
-                        </tr>
-                        <tr>
-                            <td>A</td>
-                        </tr>
-                    </table>
-                    <div class="arrow">&#8594;</div>
-                    <table class="rightTable">
-                        <tr>
-                            <th>Element Description</th>
-                        </tr>
-                        <tr>
-                            <td>A 1</td>
-                        </tr>
-                        <tr>
-                            <td>B</td>
-                        </tr>
-                        <tr>
-                            <td>A 2</td>
-                        </tr>
-                    </table>
-                </div>
-            </div>            
-        </div>
-        
         <div class="section-header">Stopwatch Controls</div>
         <button id="startBtn" class="btn">Start</button>
         <button id="stopBtn" class="btn">Stop</button>
         <button id="lockAllBtn" class="btn">Lock All</button>
         <button id="exportBtn" class="btn">Export to Excel</button>
+
+        <div class="theme-toggle-container">
+            <button id="themeToggleBtn" class="btn theme-toggle">☀</button>
+        </div>
         <div>
-            <input type="text" id="elementInput" class="input" placeholder="Enter an element" />
-            <button id="addElementBtn" class="btn">Add to Table</button>
+            <!-- <input type="text" id="elementInput" class="input" placeholder="Enter An Element" />
+            <button id="addElementBtn" class="btn">Add to Table</button> -->
             <textarea id="elementListInput" placeholder="Paste your list of elements here"></textarea>
             <button id="importElementsBtn" class="btn">Import Elements</button>
         </div>
@@ -69,7 +35,7 @@
             <table id="rightTable">
                 <tr>
                     <th>Your Elements</th>
-                    <th>Time (Mins)</th>
+                    <th>Time</th>
                     <th>Delete</th>
                 </tr>
             </table>
